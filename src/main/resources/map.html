@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Drone Navigator</title>
+    <meta charset="utf-8">
+
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=6edf6f9e-2c5e-48f9-801d-62581ab9eb56&lang=ru_RU"></script>
+
+    <style>
+        html, body, #map {
+            width: 100%;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+    </style>
+
+    <script>
+
+        let myMap;
+        let droneMarker = null;
+        let targetMarker = null;
+
+        ymaps.ready(init);
+
+        function init() {
+
+            myMap = new ymaps.Map("map", {
+                center: [55.7558, 37.6173],
+                zoom: 15,
+                controls: ['zoomControl', 'typeSelector']
+            });
+
+            droneMarker = new ymaps.Placemark(
+                [55.7558, 37.6173],
+                {
+                    balloonContent: 'Дрон'
+                },
+                {
+                    preset: 'islands#redIcon'
+                }
+            );
+
+            myMap.geoObjects.add(droneMarker);
+
+            myMap.events.add('click', function (e) {
+
+                const coords = e.get('coords');
+
+                const lat = coords[0];
+                const lon = coords[1];
+
+                setTargetMarker(lat, lon);
+
+                alert("FLY_TO:" + lat + "," + lon);
+
+            });
+        }
+
+        function setDroneMarker(lat, lon) {
+
+            if (!droneMarker) {
+
+                droneMarker = new ymaps.Placemark(
+                    [lat, lon],
+                    {
+                        balloonContent: 'Дрон'
+                    },
+                    {
+                        preset: 'islands#redIcon'
+                    }
+                );
+
+                myMap.geoObjects.add(droneMarker);
+
+            } else {
+
+                droneMarker.geometry.setCoordinates(
+                    [lat, lon]
+                );
+            }
+        }
+
+        function setTargetMarker(lat, lon) {
+
+            if (!targetMarker) {
+
+                targetMarker = new ymaps.Placemark(
+                    [lat, lon],
+                    {
+                        balloonContent: 'Цель'
+                    },
+                    {
+                        preset: 'islands#blueIcon'
+                    }
+                );
+
+                myMap.geoObjects.add(targetMarker);
+
+            } else {
+
+                targetMarker.geometry.setCoordinates(
+                    [lat, lon]
+                );
+            }
+        }
+
+    </script>
+
+</head>
+
+<body>
+<div id="map"></div>
+</body>
+</html>
